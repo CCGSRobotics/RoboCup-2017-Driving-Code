@@ -20,16 +20,17 @@ PACKET STRUCTURE
     +----+----+--+------+-----+----------+---+-----------+---------+
     |0XFF|0XFF|ID|LENGTH|ERROR|PARAMETER1|...|PARAMETER N|CHECK SUM|
     +----+----+--+------+-----+----------+---+-----------+---------+
-
+        
 """
 
 import time
 from pyax12.connection import Connection
 from pyax12.packet import *
-sc = Connection(port="/dev/ttyACM0", baudrate=1000000)
+
+#sc = Connection(port="/dev/ttyACM0", baudrate=1000000)
 
 # For connecting to USB2AX on OSX
-#sc = Connection(port="/dev/tty.usbmodem1461", baudrate="1000000")
+sc = Connection(port="/dev/tty.usbmodem1411", baudrate="1000000")
 
 
 # Print useful information about an individual dynamixel servo
@@ -93,16 +94,37 @@ def setID(CURRENT_ID, NEW_ID):
     print("Setting dynamixel ID to ",NEW_ID,"...")
     time.sleep(1)
     print("Success!")
-    for dxl in getAvailableDxl():
+    for dxl in sc.scan():
             print("Dynamixel with id", dxl, "is operational.")
 
 
-try:       
 
-        print("WARNING: This program will change the id of ALL connected Dynamixels.")
-        dxl_id = int(input("Enter new ID: "))
-        setID(254, dxl_id)
-       
-except:
-        print("Failed to set ID. Check dynamixel connection.")
+print("Servos with the following ids are connected:")
 
+for dxl in sc.scan():
+        print(dxl)
+
+print()
+action = input("Do you wish to change a servo ID? (y/n): ")
+
+if action.lower() == 'y':
+
+        servo_id = input("Enter servo ID (press enter for all): ")
+
+        if not servo_id:
+                servo_id = 254
+        else:
+                servo_id = int(servo_id)
+        
+        try:       
+                dxl_id = int(input("Enter new servo ID: "))
+                setID(servo_id, dxl_id) # 0xFE = 254
+                sc.pretty_print_control_table(dxl_id)
+
+
+        except Exception as e:
+                print("Failed to set ID. Check dynamixel connection.")
+                print(e)
+        
+
+#sc.close()
