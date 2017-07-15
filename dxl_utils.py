@@ -27,10 +27,11 @@ import time
 from pyax12.connection import Connection
 from pyax12.packet import *
 
-#sc = Connection(port="/dev/ttyACM0", baudrate=1000000)
+# Connecting to USB2AX in Linux
+sc = Connection(port="/dev/ttyACM0", baudrate=1000000)
 
-# For connecting to USB2AX on OSX
-sc = Connection(port="/dev/tty.usbmodem1411", baudrate="1000000")
+# Connecting to USB2AX in OSX
+#sc = Connection(port="/dev/tty.usbmodem1411", baudrate="1000000")
 
 
 # Print useful information about an individual dynamixel servo
